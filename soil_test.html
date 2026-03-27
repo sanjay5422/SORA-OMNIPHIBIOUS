@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SORA - Soil Test</title>
+    <link rel="stylesheet" href="soil_test.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="soil-header">
+        <div class="soil-header-left">
+            <h1>Soil Test Dashboard</h1>
+            <p>Field: Coimbatore, Tamil Nadu</p>
+        </div>
+        <div class="soil-header-right">
+            <span id="soilDate">--</span>
+            <a href="dashboard.html" class="back-btn">Back to NDVI</a>
+        </div>
+    </header>
+
+    <main class="soil-layout">
+        <section class="panel">
+            <h2>Primary Nutrients (mg/kg)</h2>
+            <div class="metric-grid">
+                <div class="metric-card">
+                    <div class="label">Nitrogen (N)</div>
+                    <div class="value">84</div>
+                    <div class="status medium">Medium</div>
+                </div>
+                <div class="metric-card">
+                    <div class="label">Phosphorus (P)</div>
+                    <div class="value">21</div>
+                    <div class="status low">Low</div>
+                </div>
+                <div class="metric-card">
+                    <div class="label">Potassium (K)</div>
+                    <div class="value">176</div>
+                    <div class="status good">Good</div>
+                </div>
+                <div class="metric-card">
+                    <div class="label">Magnesium (Mg)</div>
+                    <div class="value">62</div>
+                    <div class="status good">Good</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="panel">
+            <h2>Soil Chemistry</h2>
+            <div class="metric-grid">
+                <div class="metric-card">
+                    <div class="label">pH</div>
+                    <div class="value">6.8</div>
+                    <div class="status good">Optimal</div>
+                </div>
+                <div class="metric-card">
+                    <div class="label">Electrical Conductivity (dS/m)</div>
+                    <div class="value">0.42</div>
+                    <div class="status good">Low Salinity</div>
+                </div>
+                <div class="metric-card">
+                    <div class="label">Organic Carbon (%)</div>
+                    <div class="value">0.56</div>
+                    <div class="status medium">Medium</div>
+                </div>
+                <div class="metric-card">
+                    <div class="label">Soil Moisture (%)</div>
+                    <div class="value">24</div>
+                    <div class="status medium">Moderate</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="panel">
+            <h2>Weather and Field Conditions</h2>
+            <div class="metric-grid">
+                <div class="metric-card">
+                    <div class="label">Temperature (C)</div>
+                    <div class="value">31.4</div>
+                    <div class="status high">High</div>
+                </div>
+                <div class="metric-card">
+                    <div class="label">Humidity (%)</div>
+                    <div class="value">67</div>
+                    <div class="status medium">Moderate</div>
+                </div>
+                <div class="metric-card">
+                    <div class="label">Soil Temperature (C)</div>
+                    <div class="value">28.1</div>
+                    <div class="status medium">Warm</div>
+                </div>
+                <div class="metric-card">
+                    <div class="label">Rainfall Last 24h (mm)</div>
+                    <div class="value">2.3</div>
+                    <div class="status low">Low</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="panel recommendations">
+            <h2>Soil Test Recommendations</h2>
+            <ul>
+                <li>Apply phosphorus-rich fertilizer in low-P zones within 5 days.</li>
+                <li>Maintain current potassium and magnesium schedule.</li>
+                <li>Irrigate in early morning to reduce heat stress with current temperature.</li>
+                <li>Recheck pH and moisture after the next irrigation cycle.</li>
+            </ul>
+        </section>
+    </main>
+
+    <script>
+        document.getElementById('soilDate').textContent = new Date().toLocaleString();
+    </script>
+</body>
+</html>

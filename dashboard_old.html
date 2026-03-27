@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NDVI Crop Health Monitor</title>
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="header-content">
+                <h1>Crop Health Monitoring System</h1>
+                <div class="header-info">
+                    <span id="currentDate"></span>
+                    <span class="separator">|</span>
+                    <span id="fieldName">Field Analysis</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Left Panel: Image Viewer -->
+            <div class="left-panel">
+                <div class="panel-header">
+                    <h2>Image Analysis</h2>
+                    <div class="image-tabs">
+                        <button class="tab-btn active" data-image="ndvi">NDVI</button>
+                        <button class="tab-btn" data-image="rgb">RGB</button>
+                        <button class="tab-btn" data-image="nir">NIR</button>
+                        <button class="tab-btn" data-image="red">Red Band</button>
+                    </div>
+                </div>
+
+                <div class="image-viewer-container">
+                    <div class="image-viewer" id="imageViewer">
+                        <canvas id="imageCanvas"></canvas>
+                        <div class="image-controls">
+                            <button id="zoomIn" title="Zoom In">+</button>
+                            <button id="zoomOut" title="Zoom Out">−</button>
+                            <button id="resetView" title="Reset View">⟲</button>
+                            <span id="zoomLevel">100%</span>
+                        </div>
+                        <div class="pixel-info" id="pixelInfo">
+                            <span>Hover over image for values</span>
+                        </div>
+                    </div>
+
+                    <!-- Debug Info -->
+                    <div id="debugInfo" style="margin-top: 10px; padding: 10px; background: #f0f0f0; border-radius: 4px; font-size: 0.85rem; display: none;">
+                        <strong>Debug Info:</strong>
+                        <div id="debugContent">Loading...</div>
+                    </div>
+
+                    <!-- NDVI Legend -->
+                    <div class="ndvi-legend" id="ndviLegend">
+                        <h4>NDVI Scale</h4>
+                        <div class="legend-bar">
+                            <div class="legend-gradient"></div>
+                            <div class="legend-labels">
+                                <span>&lt; 0.2<br>Bare/Dead</span>
+                                <span>0.2 - 0.4<br>Poor</span>
+                                <span>0.4 - 0.6<br>Moderate</span>
+                                <span>&gt; 0.6<br>Healthy</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Current Analysis -->
+                <div class="analysis-section">
+                    <h3>Crop Health Analysis</h3>
+                    <div class="analysis-content">
+                        <div class="analysis-overview">
+                            <p id="overallHealth"><strong>Overall Status:</strong> <span class="status-badge">Analyzing...</span></p>
+                            <p id="healthDescription">Loading analysis...</p>
+                        </div>
+                        
+                        <div class="stress-zones">
+                            <h4>Identified Stress Regions</h4>
+                            <ul id="stressZonesList">
+                                <li>Analysis in progress...</li>
+                            </ul>
+                        </div>
+
+                        <div class="spatial-patterns">
+                            <h4>Spatial Patterns</h4>
+                            <p id="spatialDescription">Identifying patterns...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel: Statistics and Comparison -->
+            <div class="right-panel">
+                <!-- NDVI Statistics -->
+                <div class="stats-card">
+                    <h3>NDVI Statistics</h3>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-label">Average</span>
+                            <span class="stat-value" id="avgNDVI">--</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Minimum</span>
+                            <span class="stat-value" id="minNDVI">--</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Maximum</span>
+                            <span class="stat-value" id="maxNDVI">--</span>
+                        </div>
+                        <div class="stat-item highlight">
+                            <span class="stat-label">Stressed Area</span>
+                            <span class="stat-value" id="stressedArea">--</span>
+                        </div>
+                    </div>
+
+                    <!-- Area Distribution -->
+                    <div class="distribution-chart">
+                        <h4>Health Distribution</h4>
+                        <canvas id="distributionChart"></canvas>
+                        <div class="distribution-legend">
+                            <div class="legend-item">
+                                <span class="color-box" style="background: #ff6b6b;"></span>
+                                <span>Bare/Dead (&lt;0.2)</span>
+                                <span class="percent" id="barePercent">0%</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="color-box" style="background: #ffd93d;"></span>
+                                <span>Poor (0.2-0.4)</span>
+                                <span class="percent" id="poorPercent">0%</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="color-box" style="background: #95e1d3;"></span>
+                                <span>Moderate (0.4-0.6)</span>
+                                <span class="percent" id="moderatePercent">0%</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="color-box" style="background: #38b000;"></span>
+                                <span>Healthy (&gt;0.6)</span>
+                                <span class="percent" id="healthyPercent">0%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Temporal Comparison -->
+                <div class="comparison-card">
+                    <h3>Temporal Comparison</h3>
+                    <div class="comparison-toggle">
+                        <button id="loadPrevious" class="load-btn">Load Previous NDVI</button>
+                    </div>
+                    <div class="comparison-images" id="comparisonSection" style="display: none;">
+                        <div class="comparison-item">
+                            <h4>Previous</h4>
+                            <canvas id="previousCanvas"></canvas>
+                            <span class="image-date" id="previousDate">--</span>
+                        </div>
+                        <div class="comparison-item">
+                            <h4>Current</h4>
+                            <canvas id="currentCanvas"></canvas>
+                            <span class="image-date" id="currentDate2">--</span>
+                        </div>
+                    </div>
+                    <div class="trend-analysis" id="trendAnalysis" style="display: none;">
+                        <h4>Change Analysis</h4>
+                        <p id="trendDescription">No significant changes detected.</p>
+                        <div class="trend-indicator">
+                            <span class="trend-label">Overall Trend:</span>
+                            <span class="trend-value" id="trendValue">Stable</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Crop Health Report -->
+                <div class="report-card">
+                    <h3>Field Inspection Report</h3>
+                    <div class="report-content">
+                        <div class="report-section">
+                            <h4>Key Observations</h4>
+                            <ul id="observationsList">
+                                <li>Awaiting analysis completion...</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="report-section">
+                            <h4>Recommended Actions</h4>
+                            <div class="recommendations" id="recommendationsList">
+                                <p>Loading recommendations...</p>
+                            </div>
+                        </div>
+
+                        <div class="inspection-zones">
+                            <h4>Priority Inspection Zones</h4>
+                            <ol id="inspectionZones">
+                                <li>Analysis pending...</li>
+                            </ol>
+                        </div>
+
+                        <button id="exportReport" class="export-btn">Export Full Report</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Server Test</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        .test { margin: 20px 0; padding: 15px; background: #f0f0f0; border-radius: 5px; }
+        img { max-width: 300px; border: 2px solid #ddd; margin: 10px 0; }
+        .success { color: green; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <h1>NDVI Server Test</h1>
+    
+    <div class="test">
+        <h2>Test 1: API Endpoint</h2>
+        <div id="apiResult">Testing...</div>
+    </div>
+    
+    <div class="test">
+        <h2>Test 2: NDVI Image (latest.png)</h2>
+        <div id="ndviResult">Testing...</div>
+        <img id="ndviImg" src="/NDVI_Images/latest.png" style="display:none;">
+    </div>
+    
+    <div class="test">
+        <h2>Test 3: RGB Image (RGB3.jpeg)</h2>
+        <div id="rgbResult">Testing...</div>
+        <img id="rgbImg" src="/RGB_Images/RGB3.jpeg" style="display:none;">
+    </div>
+    
+    <div class="test">
+        <h2>Test 4: NIR Image (NIR2.jpeg)</h2>
+        <div id="nirResult">Testing...</div>
+        <img id="nirImg" src="/NIR_Images/NIR2.jpeg" style="display:none;">
+    </div>
+    
+    <script>
+        // Test API
+        console.log('Testing API...');
+        fetch('/api/latest')
+            .then(response => {
+                console.log('API response:', response.status);
+                return response.json();
+            })
+            .then(data => {
+                console.log('API data:', data);
+                document.getElementById('apiResult').innerHTML = '<span class="success">✓ API works! Data: ' + JSON.stringify(data).substring(0, 100) + '...</span>';
+            })
+            .catch(error => {
+                console.error('API error:', error);
+                document.getElementById('apiResult').innerHTML = '<span class="error">✗ API failed: ' + error.message + '</span>';
+            });
+        
+        // Test NDVI image
+        const ndviImg = document.getElementById('ndviImg');
+        ndviImg.onload = () => {
+            console.log('NDVI image loaded');
+            ndviImg.style.display = 'block';
+            document.getElementById('ndviResult').innerHTML = '<span class="success">✓ NDVI image loaded</span>';
+        };
+        ndviImg.onerror = () => {
+            console.error('NDVI image failed');
+            document.getElementById('ndviResult').innerHTML = '<span class="error">✗ NDVI image failed to load</span>';
+        };
+        
+        // Test RGB image
+        const rgbImg = document.getElementById('rgbImg');
+        rgbImg.onload = () => {
+            console.log('RGB image loaded');
+            rgbImg.style.display = 'block';
+            document.getElementById('rgbResult').innerHTML = '<span class="success">✓ RGB image loaded</span>';
+        };
+        rgbImg.onerror = () => {
+            console.error('RGB image failed');
+            document.getElementById('rgbResult').innerHTML = '<span class="error">✗ RGB image failed to load</span>';
+        };
+        
+        // Test NIR image
+        const nirImg = document.getElementById('nirImg');
+        nirImg.onload = () => {
+            console.log('NIR image loaded');
+            nirImg.style.display = 'block';
+            document.getElementById('nirResult').innerHTML = '<span class="success">✓ NIR image loaded</span>';
+        };
+        nirImg.onerror = () => {
+            console.error('NIR image failed');
+            document.getElementById('nirResult').innerHTML = '<span class="error">✗ NIR image failed to load</span>';
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+fastapi==0.104.1
+uvicorn==0.24.0
+websockets==12.0
+opencv-python==4.8.1.78
+numpy==1.24.3
+python-multipart==0.0.6
+
+# Optional: For Raspberry Pi connections
+paramiko>=3.0.0  # SSH connection
+requests>=2.31.0  # HTTP API connection
+pymavlink>=2.4.0  # MAVLink (autopilot) connection

@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SORA - NDVI Dashboard</title>
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <!-- Compact Header -->
+    <header class="compact-header">
+        <div class="header-left">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                <path d="M2 17l10 5 10-5"/>
+                <path d="M2 12l10 5 10-5"/>
+            </svg>
+            <h1 class="dashboard-title">SORA NDVI Dashboard</h1>
+            <span class="separator">|</span>
+            <span class="location">Coimbatore, TN</span>
+        </div>
+        <div class="header-right">
+            <span class="timestamp" id="currentDate"></span>
+            <a class="soil-btn-compact" href="soil_test.html" title="Soil Test">Soil Test</a>
+            <button class="export-btn-compact" id="exportReport" title="Export Report">
+                <span>Generate Report</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="7 10 12 15 17 10"/>
+                    <line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <!-- Fixed Three-Column Layout -->
+    <main class="fixed-layout">
+        <!-- LEFT PANEL: Visual Panel (45%) -->
+        <section class="left-panel">
+            <!-- Image Viewer with Toggle Buttons -->
+            <div class="image-viewer-compact">
+                <div class="image-tabs-compact">
+                    <button class="tab-btn-compact active" data-image="ndvi">NDVI</button>
+                    <button class="tab-btn-compact" data-image="rgb">RGB</button>
+                    <button class="tab-btn-compact" data-image="nir">NIR</button>
+                    <button class="tab-btn-compact" data-image="red">Red</button>
+                </div>
+                <div class="canvas-container">
+                    <canvas id="imageCanvas"></canvas>
+                    <div class="ndvi-legend-compact" id="ndviLegend">
+                        <div class="legend-gradient-compact"></div>
+                        <div class="legend-labels-compact">
+                            <span>Bare</span>
+                            <span>Stressed</span>
+                            <span>Moderate</span>
+                            <span>Healthy</span>
+                        </div>
+                    </div>
+                    <div class="image-controls-compact">
+                        <button id="zoomIn" title="Zoom In">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"/>
+                                <path d="m21 21-4.35-4.35"/>
+                                <line x1="11" y1="8" x2="11" y2="14"/>
+                                <line x1="8" y1="11" x2="14" y2="11"/>
+                            </svg>
+                        </button>
+                        <button id="zoomOut" title="Zoom Out">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"/>
+                                <path d="m21 21-4.35-4.35"/>
+                                <line x1="8" y1="11" x2="14" y2="11"/>
+                            </svg>
+                        </button>
+                        <button id="resetView" title="Reset">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="1 4 1 10 7 10"/>
+                                <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
+                            </svg>
+                        </button>
+                        <span id="zoomLevel">100%</span>
+                    </div>
+                    <div class="pixel-info-compact" id="pixelInfo">Hover for values</div>
+                </div>
+            </div>
+
+            <!-- Metrics Row -->
+            <div class="metrics-row-compact">
+                <div class="stat-card-compact">
+                    <div class="stat-data">
+                        <div class="stat-value-lg" id="avgNDVI">0.000</div>
+                        <div class="stat-label-sm">Avg NDVI</div>
+                    </div>
+                </div>
+                <div class="stat-card-compact">
+                    <div class="stat-data">
+                        <div class="stat-value-lg stressed" id="stressedArea">0%</div>
+                        <div class="stat-label-sm">Stressed</div>
+                    </div>
+                </div>
+                <div class="stat-card-compact">
+                    <div class="stat-data">
+                        <div class="stat-value-lg healthy" id="healthyPercent">0%</div>
+                        <div class="stat-label-sm">Healthy</div>
+                    </div>
+                </div>
+                <div class="stat-card-compact">
+                    <div class="stat-data">
+                        <div class="stat-value-lg" id="ndviRange">0.00</div>
+                        <div class="stat-label-sm">Min/Max</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CENTER PANEL: Analysis Panel (30%) -->
+        <section class="center-panel">
+            <!-- Health Status Badge -->
+            <div class="health-status-compact">
+                <div class="status-badge-lg" id="overallStatusBadge">
+                    <span id="overallHealth">Analyzing...</span>
+                </div>
+                <p class="status-summary" id="statusSummary">Field health assessment in progress</p>
+            </div>
+
+            <!-- Stress Analysis -->
+            <div class="section-compact stress-section">
+                <h3 class="section-title-compact">Stress Analysis</h3>
+                <ul class="bullet-list-compact" id="stressAnalysisList">
+                    <li>Loading analysis...</li>
+                </ul>
+            </div>
+
+            <!-- NDVI Distribution Chart -->
+            <div class="section-compact chart-section">
+                <h3 class="section-title-compact">NDVI Distribution</h3>
+                <canvas id="distributionChart" class="chart-compact"></canvas>
+            </div>
+
+            <!-- Donut Chart for Health Distribution -->
+            <div class="section-compact chart-section">
+                <h3 class="section-title-compact">Health Breakdown</h3>
+                <canvas id="donutChart" class="chart-compact-donut"></canvas>
+            </div>
+
+            <!-- Health Classification -->
+            <div class="section-compact classification-section">
+                <div class="class-row-compact">
+                    <div class="class-indicator-dot healthy"></div>
+                    <span class="class-label-compact">Healthy (&gt;0.6)</span>
+                    <span class="class-value-compact" id="healthyPercentMetric">0%</span>
+                </div>
+                <div class="class-row-compact">
+                    <div class="class-indicator-dot moderate"></div>
+                    <span class="class-label-compact">Moderate (0.4-0.6)</span>
+                    <span class="class-value-compact" id="moderatePercentMetric">0%</span>
+                </div>
+                <div class="class-row-compact">
+                    <div class="class-indicator-dot poor"></div>
+                    <span class="class-label-compact">Poor (0.2-0.4)</span>
+                    <span class="class-value-compact" id="poorPercentMetric">0%</span>
+                </div>
+                <div class="class-row-compact">
+                    <div class="class-indicator-dot bare"></div>
+                    <span class="class-label-compact">Bare (&lt;0.2)</span>
+                    <span class="class-value-compact" id="barePercentMetric">0%</span>
+                </div>
+            </div>
+
+            <!-- Gauge Chart -->
+            <div class="section-compact chart-section">
+                <h3 class="section-title-compact">Health Score</h3>
+                <canvas id="gaugeChart" class="chart-compact-gauge"></canvas>
+                <div class="health-score-display" id="healthScoreDisplay">0</div>
+            </div>
+        </section>
+
+        <!-- RIGHT PANEL: Comparison & Action Panel (25%) -->
+        <section class="right-panel">
+            <!-- Stress Indicators Chart -->
+            <div class="section-compact chart-section">
+                <h3 class="section-title-compact">Stress Indicators</h3>
+                <canvas id="stressChart" class="chart-compact-small"></canvas>
+            </div>
+
+            <!-- Radar Chart -->
+            <div class="section-compact chart-section">
+                <h3 class="section-title-compact">Field Metrics</h3>
+                <canvas id="radarChart" class="chart-compact-radar"></canvas>
+            </div>
+
+            <!-- Stress Contributors -->
+            <div class="section-compact stress-contributors-section">
+                <h3 class="section-title-compact">Identified Factors</h3>
+                <div class="factor-grid" id="factorGrid">
+                    <div class="factor-card water">
+                        <div class="factor-label">Water</div>
+                        <div class="factor-impact" id="waterImpact">Moderate</div>
+                    </div>
+                    <div class="factor-card nutrient">
+                        <div class="factor-label">Nutrients</div>
+                        <div class="factor-impact" id="nutrientImpact">Low</div>
+                    </div>
+                    <div class="factor-card compaction">
+                        <div class="factor-label">Compaction</div>
+                        <div class="factor-impact" id="compactionImpact">High</div>
+                    </div>
+                    <div class="factor-card temporal">
+                        <div class="factor-label">Recent Drop</div>
+                        <div class="factor-impact" id="temporalImpact">None</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actionable Recommendations -->
+            <div class="section-compact recommendations-section">
+                <h3 class="section-title-compact">Priority Actions</h3>
+                <div class="priority-actions" id="actionList">
+                    <div class="priority-item p1">
+                        <span class="priority-tag">P1</span>
+                        <span class="priority-text">Loading...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Inspection Zones -->
+            <div class="section-compact zones-section">
+                <h3 class="section-title-compact">Field Locations</h3>
+                <div class="location-grid" id="locationGrid">
+                    <div class="location-item critical-loc">
+                        <div class="loc-header">CRITICAL</div>
+                        <div class="loc-desc" id="criticalZones">Analyzing...</div>
+                    </div>
+                    <div class="location-item monitor-loc">
+                        <div class="loc-header">MONITOR</div>
+                        <div class="loc-desc" id="attentionZones">Analyzing...</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+    <script src="dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+{
+  "timestamp": "20260326_221928",
+  "nir_image": "NIR2.jpeg",
+  "rgb_image": "RGB3.jpeg",
+  "statistics": {
+    "min": -0.5097276264589456,
+    "max": 0.8918918918910884,
+    "mean": 0.1670036685756366,
+    "std": 0.3464029922654207
+  },
+  "distribution": {
+    "bare_percent": 43.86363299893748,
+    "poor_percent": 22.297548915215902,
+    "moderate_percent": 28.157808725875498,
+    "healthy_percent": 5.68100935997112,
+    "stressed_percent": 66.16118191415339
+  },
+  "health_analysis": {
+    "overall_status": "Critical",
+    "status_class": "danger",
+    "description": "Field analysis shows 5.7% healthy vegetation (NDVI > 0.6), 28.2% moderate health (0.4-0.6), 22.3% poor health (0.2-0.4), and 43.9% bare soil or dead crop (< 0.2). 66.2% of the total area requires attention.",
+    "stress_zones": [
+      "Significant bare soil detected - possible germination failure or crop loss",
+      "Areas with poor vegetation health - check for water stress or nutrient deficiency"
+    ],
+    "spatial_patterns": "Edge effects observed along field boundaries. Variations in NDVI suggest non-uniform water distribution or soil quality differences. Widespread stress patterns suggest systemic issues requiring investigation.",
+    "observations": [
+      "66.2% of field area shows stress symptoms (NDVI < 0.4)",
+      "Healthy vegetation covers 5.7% of analyzed area",
+      "Significant bare soil detected requiring re-seeding consideration",
+      "Crop establishment needs improvement"
+    ],
+    "recommendations": [
+      "Conduct immediate soil moisture assessment in stressed zones",
+      "Check irrigation system functionality and coverage",
+      "Consider foliar application of nutrients in moderate stress areas",
+      "Investigate pest or disease presence in critical zones",
+      "Schedule detailed field inspection within 48 hours"
+    ],
+    "inspection_zones": [
+      "Areas with bare soil - investigate causes and assess re-planting needs",
+      "Poor health zones - check water availability and nutrient status",
+      "Field edges - evaluate compaction and drainage issues"
+    ]
+  }
+}

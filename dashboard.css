@@ -1,0 +1,833 @@
+/* NDVI Crop Health Dashboard - Redesigned Single Viewport Layout */
+/* Grey background with green accents, Fixed 3-column grid */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    /* White theme with green accents */
+    --background: #f5f7fa;
+    --background-light: #ffffff;
+    --foreground: #2c3e50;
+    
+    /* Green accent palette */
+    --green-primary: #4caf50;
+    --green-dark: #388e3c;
+    --green-light: #81c784;
+    --green-accent: #66bb6a;
+    
+    /* Status colors */
+    --healthy: #4caf50;
+    --moderate: #ffb74d;
+    --poor: #ff9800;
+    --bare: #f44336;
+    --stressed: #ff5722;
+    
+    /* NDVI Color Scale */
+    --ndvi-bare: #8b4513;
+    --ndvi-poor: #ff9800;
+    --ndvi-moderate: #ffeb3b;
+    --ndvi-healthy: #4caf50;
+    
+    /* UI */
+    --card-bg: #ffffff;
+    --border: #e0e4e8;
+    --text-secondary: #64748b;
+}
+
+html, body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: var(--background);
+    color: var(--foreground);
+    height: 100vh;
+    overflow: hidden;
+    line-height: 1.3;
+    font-size: 13px;
+}
+
+/* Compact Header */
+.compact-header {
+    background-color: var(--background-light);
+    border-bottom: 2px solid var(--green-primary);
+    padding: 0.4rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 40px;
+    flex-shrink: 0;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.header-left svg {
+    color: var(--green-primary);
+}
+
+.dashboard-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--foreground);
+    margin: 0;
+}
+
+.separator {
+    color: var(--border);
+    font-weight: 300;
+}
+
+.location {
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.timestamp {
+    font-size: 11px;
+    color: var(--text-secondary);
+}
+
+.export-btn-compact {
+    background: var(--green-primary);
+    color: white;
+    border: none;
+    padding: 0.3rem 0.6rem;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 11px;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+
+.export-btn-compact:hover {
+    background: var(--green-dark);
+}
+
+.soil-btn-compact {
+    background: #1f2937;
+    color: #ffffff;
+    border: none;
+    padding: 0.3rem 0.65rem;
+    border-radius: 4px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    font-size: 11px;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+
+.soil-btn-compact:hover {
+    background: #111827;
+}
+
+/* Fixed Three-Column Layout */
+.fixed-layout {
+    display: grid;
+    grid-template-columns: 45% 30% 25%;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    height: calc(100vh - 40px);
+    overflow: hidden;
+}
+
+/* Left Panel: Visual Panel (45%) */
+.left-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    overflow: hidden;
+}
+
+/* Image Viewer Compact */
+.image-viewer-compact {
+    background: var(--card-bg);
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+}
+
+.image-tabs-compact {
+    display: flex;
+    gap: 0.3rem;
+    padding: 0.5rem 0.5rem 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.tab-btn-compact {
+    flex: 1;
+    background: transparent;
+    color: var(--text-secondary);
+    border: none;
+    padding: 0.4rem 0.6rem;
+    border-radius: 4px 4px 0 0;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.tab-btn-compact:hover {
+    background: var(--background-light);
+    color: var(--foreground);
+}
+
+.tab-btn-compact.active {
+    background: var(--green-primary);
+    color: white;
+}
+
+.canvas-container {
+    position: relative;
+    flex: 1;
+    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 0;
+}
+
+#imageCanvas {
+    max-width: 100%;
+    max-height: 100%;
+    cursor: crosshair;
+    border-radius: 4px;
+}
+
+/* NDVI Legend Compact */
+.ndvi-legend-compact {
+    position: absolute;
+    bottom: 3rem;
+    right: 1rem;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.4rem 0.6rem;
+    font-size: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.legend-gradient-compact {
+    width: 120px;
+    height: 12px;
+    background: linear-gradient(
+        to right,
+        var(--ndvi-bare),
+        var(--ndvi-poor),
+        var(--ndvi-moderate),
+        var(--ndvi-healthy)
+    );
+    border-radius: 2px;
+    margin-bottom: 0.2rem;
+}
+
+.legend-labels-compact {
+    display: flex;
+    justify-content: space-between;
+    color: var(--text-secondary);
+    font-size: 9px;
+}
+
+/* Image Controls Compact */
+.image-controls-compact {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    display: flex;
+    gap: 0.25rem;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.25rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.image-controls-compact button {
+    background: transparent;
+    border: none;
+    color: var(--foreground);
+    padding: 0.3rem;
+    cursor: pointer;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.image-controls-compact button:hover {
+    background: var(--background-light);
+}
+
+#zoomLevel {
+    font-size: 10px;
+    padding: 0 0.4rem;
+    display: flex;
+    align-items: center;
+    color: var(--text-secondary);
+}
+
+.pixel-info-compact {
+    position: absolute;
+    bottom: 0.75rem;
+    left: 0.75rem;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.3rem 0.6rem;
+    font-size: 10px;
+    color: var(--text-secondary);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Metrics Row Compact */
+.metrics-row-compact {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.5rem;
+    height: 70px;
+    flex-shrink: 0;
+}
+
+.stat-card-compact {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.stat-icon {
+    font-size: 20px;
+    line-height: 1;
+    display: none;
+}
+
+.stat-data {
+    flex: 1;
+    min-width: 0;
+    text-align: center;
+}
+
+.stat-value-lg {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--foreground);
+    line-height: 1;
+}
+
+.stat-value-lg.stressed {
+    color: var(--stressed);
+}
+
+.stat-value-lg.healthy {
+    color: var(--healthy);
+}
+
+.stat-label-sm {
+    font-size: 10px;
+    color: var(--text-secondary);
+    margin-top: 0.15rem;
+}
+
+/* Center Panel: Analysis Panel (30%) */
+.center-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.center-panel::-webkit-scrollbar {
+    width: 4px;
+}
+
+.center-panel::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 2px;
+}
+
+/* Health Status Compact */
+.health-status-compact {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.75rem;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.status-badge-lg {
+    display: inline-block;
+    background: var(--green-primary);
+    color: white;
+    padding: 0.4rem 1rem;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+}
+
+.status-summary {
+    font-size: 11px;
+    color: var(--text-secondary);
+    margin: 0;
+    line-height: 1.3;
+}
+
+/* Section Compact */
+.section-compact {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.6rem 0.75rem;
+    flex-shrink: 0;
+}
+
+.section-title-compact {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--foreground);
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.3rem;
+    border-bottom: 1px solid var(--border);
+}
+
+/* Stress Analysis */
+.bullet-list-compact {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.bullet-list-compact li {
+    font-size: 11px;
+    color: var(--text-secondary);
+    padding: 0.25rem 0;
+    padding-left: 1rem;
+    position: relative;
+    line-height: 1.4;
+}
+
+.bullet-list-compact li:before {
+    content: '•';
+    color: var(--green-primary);
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+}
+
+/* Chart Compact */
+.chart-compact {
+    width: 100%;
+    height: 160px !important;
+}
+
+/* Classification Section */
+.classification-section {
+    padding: 0.5rem 0.75rem;
+}
+
+.class-row-compact {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.3rem 0;
+    font-size: 11px;
+}
+
+.class-indicator-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.class-indicator-dot.healthy {
+    background: var(--healthy);
+}
+
+.class-indicator-dot.moderate {
+    background: var(--moderate);
+}
+
+.class-indicator-dot.poor {
+    background: var(--poor);
+}
+
+.class-indicator-dot.bare {
+    background: var(--bare);
+}
+
+.class-label-compact {
+    flex: 1;
+    color: var(--text-secondary);
+}
+
+.class-value-compact {
+    font-weight: 600;
+    color: var(--foreground);
+}
+
+/* Right Panel: Comparison & Action Panel (25%) */
+.right-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.right-panel::-webkit-scrollbar {
+    width: 4px;
+}
+
+.right-panel::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 2px;
+}
+
+/* Temporal Comparison */
+.comparison-view {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.4rem;
+    margin: 0.5rem 0;
+}
+
+.comparison-thumbnail {
+    flex: 1;
+    text-align: center;
+}
+
+.thumbnail-label {
+    font-size: 10px;
+    color: var(--text-secondary);
+    margin-bottom: 0.3rem;
+}
+
+.thumbnail-canvas {
+    width: 100%;
+    height: 80px;
+    background: var(--background);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+}
+
+.trend-arrow {
+    color: var(--green-primary);
+    flex-shrink: 0;
+}
+
+.trend-arrow.down {
+    color: var(--stressed);
+    transform: rotate(180deg);
+}
+
+.trend-arrow.neutral {
+    color: var(--text-secondary);
+}
+
+.load-previous-btn {
+    width: 100%;
+    background: var(--background-light);
+    color: var(--foreground);
+    border: 1px solid var(--border);
+    padding: 0.4rem;
+    border-radius: 4px;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.load-previous-btn:hover {
+    background: var(--green-primary);
+    color: white;
+    border-color: var(--green-primary);
+}
+
+/* Change Summary */
+.change-stat {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.3rem 0;
+    font-size: 11px;
+}
+
+.change-label {
+    color: var(--text-secondary);
+}
+
+.change-value {
+    font-weight: 600;
+    color: var(--foreground);
+}
+
+.change-value.positive {
+    color: var(--healthy);
+}
+
+.change-value.negative {
+    color: var(--stressed);
+}
+
+/* Recommendations */
+.action-list-compact {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.action-item-compact {
+    background: var(--background-light);
+    border-left: 3px solid var(--green-primary);
+    padding: 0.5rem;
+    border-radius: 3px;
+    font-size: 11px;
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
+.action-item-compact.high-priority {
+    border-left-color: var(--stressed);
+}
+
+/* Inspection Zones */
+.zone-list-compact {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.zone-item-compact {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    font-size: 11px;
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
+.zone-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 0.15rem;
+}
+
+.zone-item-compact.critical .zone-dot {
+    background: var(--bare);
+}
+
+.zone-item-compact.warning .zone-dot {
+    background: var(--poor);
+}
+
+.zone-item-compact.healthy .zone-dot {
+    background: var(--healthy);
+}
+
+/* Utility Classes */
+.text-green {
+    color: var(--green-primary);
+}
+
+.text-warning {
+    color: var(--poor);
+}
+
+.text-danger {
+    color: var(--bare);
+}
+
+/* Additional Chart Types */
+.chart-compact-donut {
+    width: 100%;
+    height: 140px !important;
+}
+
+.chart-compact-gauge {
+    width: 100%;
+    height: 120px !important;
+}
+
+.chart-compact-small {
+    width: 100%;
+    height: 130px !important;
+}
+
+.chart-compact-radar {
+    width: 100%;
+    height: 140px !important;
+}
+
+.health-score-display {
+    text-align: center;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--green-primary);
+    margin-top: 0.3rem;
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 1600px) {
+    .fixed-layout {
+        font-size: 12px;
+    }
+    
+    .stat-value-lg {
+        font-size: 16px;
+    }
+}
+
+/* Hide scrollbars but keep functionality */
+.center-panel, .right-panel {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+}
+
+/* Factor Grid - Data-Driven Stress Contributors */
+.factor-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+}
+
+.factor-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.6rem;
+    text-align: center;
+    transition: all 0.2s;
+}
+
+.factor-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.factor-label {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #7f8c8d;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+}
+
+.factor-impact {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--foreground);
+}
+
+.factor-card.water .factor-impact { color: #3498db; }
+.factor-card.nutrient .factor-impact { color: #f39c12; }
+.factor-card.compaction .factor-impact { color: #e74c3c; }
+.factor-card.temporal .factor-impact { color: #95a5a6; }
+
+/* Priority Actions - Professional Recommendations */
+.priority-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.priority-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 0.6rem;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-size: 10px;
+    line-height: 1.4;
+}
+
+.priority-tag {
+    display: inline-block;
+    min-width: 24px;
+    padding: 0.15rem 0.35rem;
+    background: #7f8c8d;
+    color: white;
+    font-weight: 700;
+    font-size: 9px;
+    border-radius: 3px;
+    text-align: center;
+}
+
+.priority-item.p1 .priority-tag { background: #e74c3c; }
+.priority-item.p2 .priority-tag { background: #f39c12; }
+.priority-item.p3 .priority-tag { background: #3498db; }
+
+.priority-text {
+    flex: 1;
+    color: var(--foreground);
+}
+
+/* Field Locations - Professional Inspection Zones */
+.location-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.location-item {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.7rem;
+    border-left-width: 4px;
+}
+
+.location-item.critical-loc {
+    border-left-color: #e74c3c;
+    background: rgba(231, 76, 60, 0.03);
+}
+
+.location-item.monitor-loc {
+    border-left-color: #f39c12;
+    background: rgba(243, 156, 18, 0.03);
+}
+
+.loc-header {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    color: #7f8c8d;
+    margin-bottom: 0.4rem;
+}
+
+.loc-desc {
+    font-size: 10px;
+    color: var(--foreground);
+    line-height: 1.5;
+}
+

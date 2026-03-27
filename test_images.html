@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
+        .test-section { background: white; padding: 20px; margin: 20px 0; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        img { max-width: 100%; border: 2px solid #ddd; margin: 10px 0; }
+        .status { padding: 10px; margin: 10px 0; border-radius: 4px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        code { background: #f4f4f4; padding: 2px 6px; border-radius: 3px; }
+    </style>
+</head>
+<body>
+    <h1>NDVI Dashboard - Image Loading Test</h1>
+    
+    <div class="test-section">
+        <h2>Test 1: Latest NDVI Image</h2>
+        <p>Path: <code>/NDVI_Images/latest.png</code></p>
+        <img src="/NDVI_Images/latest.png" onerror="this.parentElement.innerHTML += '<div class=\'status error\'>Failed to load NDVI image</div>'" onload="this.parentElement.innerHTML += '<div class=\'status success\'>NDVI image loaded successfully!</div>'">
+    </div>
+
+    <div class="test-section">
+        <h2>Test 2: RGB Image</h2>
+        <p>Path: <code>/RGB_Images/RGB3.jpeg</code></p>
+        <img src="/RGB_Images/RGB3.jpeg" onerror="this.parentElement.innerHTML += '<div class=\'status error\'>Failed to load RGB image</div>'" onload="this.parentElement.innerHTML += '<div class=\'status success\'>RGB image loaded successfully!</div>'">
+    </div>
+
+    <div class="test-section">
+        <h2>Test 3: NIR Image</h2>
+        <p>Path: <code>/NIR_Images/NIR2.jpeg</code></p>
+        <img src="/NIR_Images/NIR2.jpeg" onerror="this.parentElement.innerHTML += '<div class=\'status error\'>Failed to load NIR image</div>'" onload="this.parentElement.innerHTML += '<div class=\'status success\'>NIR image loaded successfully!</div>'">
+    </div>
+
+    <div class="test-section">
+        <h2>Test 4: Red Band Image</h2>
+        <p>Path: <code>/RED_BAND_IMAGES/Red_Band_20260126_192604.png</code></p>
+        <img src="/RED_BAND_IMAGES/Red_Band_20260126_192604.png" onerror="this.parentElement.innerHTML += '<div class=\'status error\'>Failed to load Red Band image</div>'" onload="this.parentElement.innerHTML += '<div class=\'status success\'>Red Band image loaded successfully!</div>'">
+    </div>
+
+    <div class="test-section">
+        <h2>Test 5: API Endpoint</h2>
+        <p>Endpoint: <code>/api/latest</code></p>
+        <div id="apiTest">Testing...</div>
+    </div>
+
+    <script>
+        // Test API
+        fetch('/api/latest')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('apiTest').innerHTML = 
+                    '<div class="status success">API working! Data: <pre>' + JSON.stringify(data, null, 2) + '</pre></div>';
+            })
+            .catch(error => {
+                document.getElementById('apiTest').innerHTML = 
+                    '<div class="status error">API failed: ' + error.message + '</div>';
+            });
+    </script>
+
+    <div style="margin-top: 30px; padding: 20px; background: #e3f2fd; border-radius: 8px;">
+        <h3>Instructions:</h3>
+        <ol>
+            <li>Make sure the server is running: <code>python server.py</code></li>
+            <li>Open this page: <code>http://localhost:8000/test_images.html</code></li>
+            <li>All images should load successfully</li>
+            <li>If any image fails, check the console for errors</li>
+        </ol>
+        <p><a href="/dashboard.html" style="display: inline-block; padding: 10px 20px; background: #4CAF50; color: white; text-decoration: none; border-radius: 4px; margin-top: 10px;">Go to Dashboard</a></p>
+    </div>
+</body>
+</html>
